@@ -2,6 +2,7 @@ import Variables from "../types/variables";
 import { google } from "googleapis";
 import { Credentials, OAuth2Client } from "google-auth-library";
 import FileSystemHelper from "./file-system-helper";
+import tokenStatus from "../types/token-status";
 
 export default class AuthHelper {
   private refreshToken: string;
@@ -37,16 +38,15 @@ export default class AuthHelper {
     );
   }
 
-  accessTokenNeedsRefresh = () => {
+  checkTokenStatus = (): tokenStatus => {
     const currentTime = new Date().getTime();
-    const expirationThreshold = 24 * 60 * 60 * 1000;
+    const expirationThreshold = 0.1 * 60 * 60 * 1000;
     const expirationThresholdTime =
       this.tokenExpiryInMillis - expirationThreshold;
 
-    return (
-      this.tokenExpiryInMillis <= currentTime ||
-      expirationThresholdTime <= currentTime
-    );
+    if (this.tokenExpiryInMillis <= currentTime) return tokenStatus.expired;
+    if (expirationThresholdTime <= currentTime) return tokenStatus.expiringSoon;
+    return tokenStatus.active;
   };
 
   refreshAuthToken = async () => {
@@ -56,6 +56,7 @@ export default class AuthHelper {
     let response = await this.oauth2Client.refreshAccessToken();
 
     FileSystemHelper.saveAuthToken(response.credentials);
+    console.log("Auth token refreshed!");
   };
 
   exchangeAuthCodeForTokens = async (
