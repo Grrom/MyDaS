@@ -29,7 +29,7 @@ export default class AuthHelper {
     this.refreshToken = refreshToken;
     this.redirectUri = redirectUri;
     this.clientSecret = clientSecret;
-    this.tokenExpiryInMillis = parseInt(tokenExpiryInMillis);
+    this.tokenExpiryInMillis = tokenExpiryInMillis;
 
     this.oauth2Client = new google.auth.OAuth2(
       this.clientId,
@@ -37,6 +37,24 @@ export default class AuthHelper {
       this.redirectUri
     );
   }
+
+  needsToReInitializeToken = async (authHelper: AuthHelper) => {
+    switch (authHelper.checkTokenStatus()) {
+      case tokenStatus.expired:
+        await authHelper.refreshAuthToken();
+        console.log("Sync token refresh complete");
+        return true;
+      case tokenStatus.expiringSoon:
+        authHelper.refreshAuthToken().then(() => {
+          console.log("Async token refresh complete");
+        });
+        return false;
+      case tokenStatus.active:
+      default:
+        console.log("No need to refresh token");
+        return false;
+    }
+  };
 
   checkTokenStatus = (): tokenStatus => {
     const currentTime = new Date().getTime();

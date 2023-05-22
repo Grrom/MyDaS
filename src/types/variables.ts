@@ -1,10 +1,10 @@
 type Variables = {
   clientId: string;
-  authToken: string;
-  refreshToken: string;
   redirectUri: string;
   clientSecret: string;
-  tokenExpiryInMillis: string;
+  authToken: string;
+  refreshToken: string;
+  tokenExpiryInMillis: number;
 };
 
 export default Variables;

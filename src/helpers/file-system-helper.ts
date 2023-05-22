@@ -20,6 +20,7 @@ export default class FileSystemHelper {
     const variables: Variables = this.getVariables();
     variables.authToken = tokens.access_token!;
     variables.refreshToken = tokens.refresh_token!;
+    variables.tokenExpiryInMillis = tokens.expiry_date!;
 
     fs.writeFileSync(this.variablesPath, JSON.stringify(variables));
   };

@@ -3,19 +3,6 @@ import AuthHelper from "./helpers/auth-helper";
 import tokenStatus from "./types/token-status";
 import MeditationService from "./services/meditation-service";
 
-const checkTokenNeedsRefresh = async (authHelper: AuthHelper) => {
-  switch (authHelper.checkTokenStatus()) {
-    case tokenStatus.expired:
-      await authHelper.refreshAuthToken();
-      break;
-    case tokenStatus.expiringSoon:
-      authHelper.refreshAuthToken();
-      break;
-    case tokenStatus.active:
-    default:
-  }
-};
-
 const getTodayData = ({ meditation }: { meditation: MeditationService }) => {
   const startOfToday = new Date();
   const endOfToday = new Date();
@@ -33,16 +20,17 @@ const getTodayData = ({ meditation }: { meditation: MeditationService }) => {
 };
 
 const main = async () => {
-  const variables = FileSystemHelper.getVariables();
-  const authHelper = new AuthHelper(variables);
+  let variables = FileSystemHelper.getVariables();
+  let authHelper = new AuthHelper(variables);
 
-  await checkTokenNeedsRefresh(authHelper);
+  if (await authHelper.needsToReInitializeToken(authHelper)) {
+    variables = FileSystemHelper.getVariables();
+    authHelper = new AuthHelper(variables);
+  }
 
   const meditation = new MeditationService(variables);
 
   getTodayData({ meditation: meditation });
-
-  console.log("GOT HERE");
 };
 
 main();
