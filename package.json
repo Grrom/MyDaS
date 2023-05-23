@@ -1,7 +1,7 @@
 {
-  "name": "notion-data-automation",
+  "name": "mydas",
   "version": "1.0.0",
-  "description": "automating saving data to notion.",
+  "description": "automating collection of my personal data from apps that I use.",
   "main": "main.ts",
   "scripts": {
     "test": "test",
