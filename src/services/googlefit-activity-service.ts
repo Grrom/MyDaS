@@ -2,17 +2,19 @@ import fetch from "node-fetch";
 import Variables from "../types/variables";
 import ActivityType from "../types/activity-types";
 
-export default class MeditationService {
-  private readonly activityCode = ActivityType.meditation;
-  private readonly baseUri: string =
-    "https://www.googleapis.com/fitness/v1/users/me/sessions";
+export default class GoogleFitActivityService {
+  private activityCode: ActivityType;
   private variables: Variables;
 
-  constructor(variables: Variables) {
+  private readonly baseUri: string =
+    "https://www.googleapis.com/fitness/v1/users/me/sessions";
+
+  constructor(variables: Variables, activityCode: ActivityType) {
+    this.activityCode = activityCode;
     this.variables = variables;
   }
 
-  getMeditations = async (start: string, end: string) => {
+  getActivityToday = async (start: string, end: string) => {
     let url = new URL(this.baseUri);
 
     url.searchParams.append("startTime", start);
