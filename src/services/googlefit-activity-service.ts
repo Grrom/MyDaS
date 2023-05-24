@@ -3,6 +3,7 @@ import Variables from "../types/variables";
 import ActivityType from "../types/activity-types";
 
 export default class GoogleFitActivityService {
+  // TODO: inherit from DailyService
   private activityCode: ActivityType;
   private variables: Variables;
 

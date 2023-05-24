@@ -3,6 +3,7 @@ import AuthHelper from "./helpers/auth-helper";
 import GoogleFitActivityService from "./services/googlefit-activity-service";
 import ActivityType from "./types/activity-types";
 import Variables from "./types/variables";
+import GoogleFitAggregateDataService from "./services/googlefit-aggregate-data-service";
 
 const getTodayData = (variables: Variables) => {
   const meditation = new GoogleFitActivityService(
@@ -10,6 +11,14 @@ const getTodayData = (variables: Variables) => {
     ActivityType.meditation
   );
   const sleep = new GoogleFitActivityService(variables, ActivityType.sleep);
+  const heartPoints = new GoogleFitAggregateDataService({
+    variables: variables,
+    dataSource: {
+      dataTypeName: "com.google.heart_minutes",
+      dataSourceId:
+        "derived:com.google.heart_minutes:com.google.android.gms:merge_heart_minutes",
+    },
+  });
   const startOfToday = new Date();
   const endOfToday = new Date();
 
@@ -22,6 +31,7 @@ const getTodayData = (variables: Variables) => {
   const startOfTodayInISO = startOfToday.toISOString();
   const endOfTodayInISO = endOfToday.toISOString();
 
+  heartPoints.getAggregateDataToday();
   meditation.getActivityToday(startOfTodayInISO, endOfTodayInISO);
   sleep.getActivityToday(startOfTodayInISO, endOfTodayInISO);
 };
