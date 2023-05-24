@@ -1,14 +1,14 @@
 import fetch from "node-fetch";
 import Variables from "../types/variables";
 import ActivityType from "../types/activity-types";
+import FileSystemHelper from "../helpers/file-system-helper";
 
 export default class GoogleFitActivityService {
   // TODO: inherit from DailyService
   private activityCode: ActivityType;
   private variables: Variables;
 
-  private readonly baseUri: string =
-    "https://www.googleapis.com/fitness/v1/users/me/sessions";
+  private readonly baseUri: string = FileSystemHelper.getActivityBaseUri();
 
   constructor(variables: Variables, activityCode: ActivityType) {
     this.activityCode = activityCode;

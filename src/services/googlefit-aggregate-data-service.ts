@@ -2,14 +2,14 @@ import fetch from "node-fetch";
 import Variables from "../types/variables";
 import DailyService from "../models/daily-service";
 import aggregateDataSource from "../types/aggregate-data-source";
+import FileSystemHelper from "../helpers/file-system-helper";
 
 export default class GoogleFitAggregateDataService extends DailyService {
   private variables: Variables;
   private dataTypeName: string;
   private dataSourceId: string;
 
-  private readonly baseUri: string =
-    "https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate";
+  private readonly baseUri: string = FileSystemHelper.getAggregateDataBaseUri();
 
   constructor({
     variables,
