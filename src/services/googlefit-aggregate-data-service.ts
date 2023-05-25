@@ -3,6 +3,8 @@ import Variables from "../types/variables";
 import DailyService from "../models/daily-service";
 import aggregateDataSource from "../types/aggregate-data-source";
 import FileSystemHelper from "../helpers/file-system-helper";
+import DependencyContainer from "./dependency-container";
+import Dependencies from "../types/dependencies";
 
 export default class GoogleFitAggregateDataService extends DailyService {
   private variables: Variables;
@@ -25,6 +27,10 @@ export default class GoogleFitAggregateDataService extends DailyService {
   }
 
   getAggregateDataToday = async () => {
+    const container = DependencyContainer.getInstance();
+    const logger = container.resolve(Dependencies.logger);
+
+    logger.info("Getting aggregate data for today.");
     let url = new URL(this.baseUri);
 
     fetch(url, {

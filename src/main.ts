@@ -4,6 +4,9 @@ import GoogleFitActivityService from "./services/googlefit-activity-service";
 import ActivityType from "./types/activity-types";
 import Variables from "./types/variables";
 import GoogleFitAggregateDataService from "./services/googlefit-aggregate-data-service";
+import LogsHelper from "./helpers/winston";
+import DependencyContainer from "./services/dependency-container";
+import Dependencies from "./types/dependencies";
 
 const getTodayData = (variables: Variables) => {
   const meditation = new GoogleFitActivityService(
@@ -36,7 +39,18 @@ const getTodayData = (variables: Variables) => {
   sleep.getActivityToday(startOfTodayInISO, endOfTodayInISO);
 };
 
+const setupDependencies = () => {
+  const container = DependencyContainer.getInstance();
+
+  const loggerInstance = LogsHelper.getInstance();
+  const logger = loggerInstance.getLogger();
+
+  container.register(Dependencies.logger, logger);
+};
+
 const main = async () => {
+  setupDependencies();
+
   let variables = FileSystemHelper.getVariables(); // TODO: turn this into a singleton
   let authHelper = new AuthHelper(variables); // TODO: turn this into a singleton
 
