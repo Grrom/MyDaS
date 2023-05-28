@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default class FileSystemHelper {
-  //TODO: turn into a singleton
   private static readonly variablesPath =
     process.env.VARIABLES_PATH ?? "variables.json";
 
