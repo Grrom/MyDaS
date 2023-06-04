@@ -6,7 +6,8 @@
   "scripts": {
     "test": "test",
     "dev": "ts-node-dev --respawn src/main.ts",
-    "devAuth": "ts-node-dev --respawn src/auth-listener.ts"
+    "devAuth": "ts-node-dev --respawn src/auth-listener.ts",
+    "clearLogs": "rm *.log"
   },
   "repository": {
     "type": "git",

@@ -9,7 +9,6 @@ export default class LogsHelper {
     this.logger = winston.createLogger({
       level: LogLevel.Info,
       format: winston.format.json(),
-      defaultMeta: { service: "service" },
       transports: [
         new winston.transports.File({ filename: "error.log", level: "error" }),
         new winston.transports.File({ filename: "combined.log" }),
@@ -26,11 +25,11 @@ export default class LogsHelper {
   }
 
   public static getInstance(): LogsHelper {
-    if (!LogsHelper.instance) {
-      LogsHelper.instance = new LogsHelper();
+    if (!this.instance) {
+      this.instance = new LogsHelper();
     }
 
-    return LogsHelper.instance;
+    return this.instance;
   }
 
   public getLogger(): winston.Logger {

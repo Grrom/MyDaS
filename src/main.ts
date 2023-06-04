@@ -3,14 +3,11 @@ import AuthHelper from "./helpers/auth-helper";
 import GoogleFitActivityService from "./services/googlefit-activity-service";
 import ActivityType from "./types/activity-types";
 import GoogleFitAggregateDataService from "./services/googlefit-aggregate-data-service";
-import LogsHelper from "./helpers/winston";
-import DependencyContainer from "./services/dependency-container";
-import Dependencies from "./types/dependencies";
 import TokenDetails from "./types/token-details";
 
 const getTodayData = (tokenDetails: TokenDetails) => {
   const meditation = new GoogleFitActivityService(
-    tokenDetails,
+    tokenDetails, //TODO: token details should be in request helper only
     ActivityType.meditation
   );
 
@@ -29,18 +26,7 @@ const getTodayData = (tokenDetails: TokenDetails) => {
   sleep.getActivityToday();
 };
 
-const setupDependencies = () => {
-  const container = DependencyContainer.getInstance();
-
-  const loggerInstance = LogsHelper.getInstance();
-  const logger = loggerInstance.getLogger();
-
-  container.register(Dependencies.logger, logger);
-};
-
 const main = async () => {
-  setupDependencies();
-
   let tokenDetails = FileSystemHelper.getTokenDetails(); // TODO: turn this into a singleton
   let authHelper = AuthHelper.getInstance(); // TODO: turn this into a singleton
 
