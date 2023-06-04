@@ -1,19 +1,19 @@
 import fetch from "node-fetch";
-import Variables from "../types/variables";
 import ActivityType from "../types/activity-types";
 import FileSystemHelper from "../helpers/file-system-helper";
 import DailyService from "../models/daily-service";
+import TokenDetails from "../types/token-details";
 
 export default class GoogleFitActivityService extends DailyService {
   private activityCode: ActivityType;
-  private variables: Variables;
+  private tokenDetails: TokenDetails;
 
   private readonly baseUri: string = FileSystemHelper.getActivityBaseUri();
 
-  constructor(variables: Variables, activityCode: ActivityType) {
+  constructor(tokenDetails: TokenDetails, activityCode: ActivityType) {
     super();
     this.activityCode = activityCode;
-    this.variables = variables;
+    this.tokenDetails = tokenDetails;
   }
 
   getActivityToday = async () => {
@@ -26,7 +26,7 @@ export default class GoogleFitActivityService extends DailyService {
     fetch(url, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${this.variables.authToken}`,
+        Authorization: `Bearer ${this.tokenDetails.authToken}`,
       },
     })
       .then((res) => res.json())

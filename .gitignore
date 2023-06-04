@@ -1,4 +1,4 @@
-variables.json
+token-details.json
 node_modules
 .env
 *.log

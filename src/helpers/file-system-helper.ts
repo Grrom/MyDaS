@@ -1,19 +1,28 @@
 import fs from "fs";
-import Variables from "../types/variables";
+import TokenDetails from "../types/token-details";
 import { Credentials } from "google-auth-library/build/src/auth/credentials";
 import dotenv from "dotenv";
+import ClientData from "../types/client-data";
 
-dotenv.config();
+dotenv.config(); //turn this into a singleton and invoke once in constructor
 
 export default class FileSystemHelper {
-  private static readonly variablesPath =
-    process.env.VARIABLES_PATH ?? "variables.json";
+  private static readonly tokenDetailsPath =
+    process.env.TOKEN_DETAILS_PATH ?? "token-details.json";
 
-  static getVariables = (): Variables => {
-    const jsonString = fs.readFileSync(this.variablesPath, "utf8");
+  static getTokenDetails = (): TokenDetails => {
+    const jsonString = fs.readFileSync(this.tokenDetailsPath, "utf8");
     const jsonObject = JSON.parse(jsonString);
 
     return jsonObject;
+  };
+
+  static getClientData = (): ClientData => {
+    return {
+      clientId: process.env.CLIENT_ID ?? "",
+      clientSecret: process.env.CLIENT_SECRET ?? "",
+      redirectUri: process.env.REDIRECT_URI ?? "",
+    };
   };
 
   static getAuthListenerPort = (): number =>
@@ -25,11 +34,11 @@ export default class FileSystemHelper {
   static getActivityBaseUri = () => process.env.ACTIVITY_BASE_URI ?? "";
 
   static saveAuthToken = (tokens: Credentials) => {
-    const variables: Variables = this.getVariables();
-    variables.authToken = tokens.access_token!;
-    variables.refreshToken = tokens.refresh_token!;
-    variables.tokenExpiryInMillis = tokens.expiry_date!;
+    const tokenDetails: TokenDetails = this.getTokenDetails();
+    tokenDetails.authToken = tokens.access_token!;
+    tokenDetails.refreshToken = tokens.refresh_token!;
+    tokenDetails.tokenExpiryInMillis = tokens.expiry_date!;
 
-    fs.writeFileSync(this.variablesPath, JSON.stringify(variables));
+    fs.writeFileSync(this.tokenDetailsPath, JSON.stringify(tokenDetails));
   };
 }

@@ -3,9 +3,9 @@ import FileSystemHelper from "./file-system-helper";
 
 export default class RequestHelper {
   private static getAuthToken = async () => {
-    const authHelper = new AuthHelper(FileSystemHelper.getVariables());
-    if (await authHelper.needsToReInitializeToken(authHelper)) {
-      return FileSystemHelper.getVariables().authToken;
+    const authHelper = AuthHelper.getInstance();
+    if (await AuthHelper.needsToReInitializeToken(authHelper)) {
+      return FileSystemHelper.getTokenDetails().authToken;
     }
     return authHelper;
   };

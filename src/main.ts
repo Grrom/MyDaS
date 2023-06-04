@@ -2,21 +2,21 @@ import FileSystemHelper from "./helpers/file-system-helper";
 import AuthHelper from "./helpers/auth-helper";
 import GoogleFitActivityService from "./services/googlefit-activity-service";
 import ActivityType from "./types/activity-types";
-import Variables from "./types/variables";
 import GoogleFitAggregateDataService from "./services/googlefit-aggregate-data-service";
 import LogsHelper from "./helpers/winston";
 import DependencyContainer from "./services/dependency-container";
 import Dependencies from "./types/dependencies";
+import TokenDetails from "./types/token-details";
 
-const getTodayData = (variables: Variables) => {
+const getTodayData = (tokenDetails: TokenDetails) => {
   const meditation = new GoogleFitActivityService(
-    variables,
+    tokenDetails,
     ActivityType.meditation
   );
 
-  const sleep = new GoogleFitActivityService(variables, ActivityType.sleep);
+  const sleep = new GoogleFitActivityService(tokenDetails, ActivityType.sleep);
   const heartPoints = new GoogleFitAggregateDataService({
-    variables: variables,
+    tokenDetails: tokenDetails,
     dataSource: {
       dataTypeName: "com.google.heart_minutes",
       dataSourceId:
@@ -41,16 +41,16 @@ const setupDependencies = () => {
 const main = async () => {
   setupDependencies();
 
-  let variables = FileSystemHelper.getVariables(); // TODO: turn this into a singleton
-  let authHelper = new AuthHelper(variables); // TODO: turn this into a singleton
+  let tokenDetails = FileSystemHelper.getTokenDetails(); // TODO: turn this into a singleton
+  let authHelper = AuthHelper.getInstance(); // TODO: turn this into a singleton
 
-  if (await authHelper.needsToReInitializeToken(authHelper)) {
+  if (await AuthHelper.needsToReInitializeToken(authHelper)) {
     // TODO: after turning authHelper into a singleton decouple this from the main function and invoke when needed
-    variables = FileSystemHelper.getVariables();
-    authHelper = new AuthHelper(variables);
+    tokenDetails = FileSystemHelper.getTokenDetails();
+    authHelper = AuthHelper.getInstance();
   }
 
-  getTodayData(variables);
+  getTodayData(tokenDetails);
 };
 
 main();

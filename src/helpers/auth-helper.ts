@@ -1,8 +1,9 @@
-import Variables from "../types/variables";
 import { google } from "googleapis";
 import { Credentials, OAuth2Client } from "google-auth-library";
 import FileSystemHelper from "./file-system-helper";
 import tokenStatus from "../types/token-status";
+import TokenDetails from "../types/token-details";
+import ClientData from "../types/client-data";
 
 export default class AuthHelper {
   private refreshToken: string;
@@ -13,23 +14,22 @@ export default class AuthHelper {
 
   private oauth2Client: OAuth2Client;
 
+  private static instance: AuthHelper;
+
   scopes: string[] = [
     "https://www.googleapis.com/auth/fitness.activity.read",
     "https://www.googleapis.com/auth/fitness.sleep.read",
   ];
 
-  constructor({
-    clientId,
-    refreshToken,
-    redirectUri,
-    clientSecret,
-    tokenExpiryInMillis,
-  }: Variables) {
-    this.clientId = clientId;
-    this.refreshToken = refreshToken;
-    this.redirectUri = redirectUri;
-    this.clientSecret = clientSecret;
-    this.tokenExpiryInMillis = tokenExpiryInMillis;
+  private constructor() {
+    const tokenDetails: TokenDetails = FileSystemHelper.getTokenDetails();
+    const clientData: ClientData = FileSystemHelper.getClientData();
+
+    this.clientId = clientData.clientId;
+    this.refreshToken = tokenDetails.refreshToken;
+    this.redirectUri = clientData.redirectUri;
+    this.clientSecret = clientData.clientSecret;
+    this.tokenExpiryInMillis = tokenDetails.tokenExpiryInMillis;
 
     this.oauth2Client = new google.auth.OAuth2(
       this.clientId,
@@ -38,21 +38,33 @@ export default class AuthHelper {
     );
   }
 
-  needsToReInitializeToken = async (authHelper: AuthHelper) => {
-    switch (authHelper.checkTokenStatus()) {
-      case tokenStatus.expired:
-        await authHelper.refreshAuthToken();
-        console.log("Sync token refresh complete");
-        return true;
-      case tokenStatus.expiringSoon:
-        authHelper.refreshAuthToken().then(() => {
-          console.log("Async token refresh complete");
-        });
-        return false;
-      case tokenStatus.active:
-      default:
-        console.log("No need to refresh token");
-        return false;
+  static getInstance = (): AuthHelper => {
+    if (!this.instance) {
+      this.instance = new AuthHelper();
+      return this.instance;
+    }
+    return this.instance;
+  };
+
+  static needsToReInitializeToken = async (authHelper: AuthHelper) => {
+    try {
+      switch (authHelper.checkTokenStatus()) {
+        case tokenStatus.expired:
+          await authHelper.refreshAuthToken();
+          console.log("Sync token refresh complete");
+          return true;
+        case tokenStatus.expiringSoon:
+          authHelper.refreshAuthToken().then(() => {
+            console.log("Async token refresh complete");
+          });
+          return false;
+        case tokenStatus.active:
+        default:
+          console.log("No need to refresh token");
+          return false;
+      }
+    } catch (error) {
+      console.log("Error refreshing token: ", error);
     }
   };
 

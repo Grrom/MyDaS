@@ -7,7 +7,7 @@ const app = express();
 const PORT = FileSystemHelper.getAuthListenerPort();
 
 app.get("/", async (req, res) => {
-  const authHelper = new AuthHelper(FileSystemHelper.getVariables());
+  const authHelper = AuthHelper.getInstance();
   FileSystemHelper.saveAuthToken(
     await authHelper.exchangeAuthCodeForTokens(req.query.code as string)
   );
