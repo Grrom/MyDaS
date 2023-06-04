@@ -13,6 +13,7 @@ const getTodayData = (variables: Variables) => {
     variables,
     ActivityType.meditation
   );
+
   const sleep = new GoogleFitActivityService(variables, ActivityType.sleep);
   const heartPoints = new GoogleFitAggregateDataService({
     variables: variables,
@@ -22,21 +23,10 @@ const getTodayData = (variables: Variables) => {
         "derived:com.google.heart_minutes:com.google.android.gms:merge_heart_minutes",
     },
   });
-  const startOfToday = new Date();
-  const endOfToday = new Date();
-
-  startOfToday.setHours(0, 0, 0, 0);
-  endOfToday.setHours(23, 59, 59, 999);
-
-  const startOfTodayMilliseconds = startOfToday.getTime();
-  const endOfTodayMilliseconds = endOfToday.getTime();
-
-  const startOfTodayInISO = startOfToday.toISOString();
-  const endOfTodayInISO = endOfToday.toISOString();
 
   heartPoints.getAggregateDataToday();
-  meditation.getActivityToday(startOfTodayInISO, endOfTodayInISO);
-  sleep.getActivityToday(startOfTodayInISO, endOfTodayInISO);
+  meditation.getActivityToday();
+  sleep.getActivityToday();
 };
 
 const setupDependencies = () => {

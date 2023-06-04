@@ -3,6 +3,8 @@ export default class DailyService {
   endOfToday = new Date();
   startOfTodayInMilliseconds = this.startOfToday.getTime();
   endOfTodayInMilliseconds = this.endOfToday.getTime();
+  startOfTodayInISO = this.startOfToday.toISOString();
+  endOfTodayInISO = this.endOfToday.toISOString();
 
   constructor() {
     this.startOfToday.setHours(0, 0, 0, 0);
