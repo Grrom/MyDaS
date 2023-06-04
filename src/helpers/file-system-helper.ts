@@ -28,11 +28,6 @@ export default class FileSystemHelper {
   static getAuthListenerPort = (): number =>
     parseInt(process.env.AUTH_LISTENER_PORT ?? "") || 4000;
 
-  static getAggregateDataBaseUri = () =>
-    process.env.AGGREGATE_DATA_BASE_URI ?? "";
-
-  static getActivityBaseUri = () => process.env.ACTIVITY_BASE_URI ?? "";
-
   static saveAuthToken = (tokens: Credentials) => {
     const tokenDetails: TokenDetails = this.getTokenDetails();
     tokenDetails.authToken = tokens.access_token!;

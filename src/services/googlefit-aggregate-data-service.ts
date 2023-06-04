@@ -11,7 +11,8 @@ export default class GoogleFitAggregateDataService extends DailyService {
   private dataTypeName: string;
   private dataSourceId: string;
 
-  private readonly baseUri: string = FileSystemHelper.getAggregateDataBaseUri();
+  private readonly baseUri: string =
+    "https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate";
 
   constructor({
     tokenDetails,

@@ -8,7 +8,8 @@ export default class GoogleFitActivityService extends DailyService {
   private activityCode: ActivityType;
   private tokenDetails: TokenDetails;
 
-  private readonly baseUri: string = FileSystemHelper.getActivityBaseUri();
+  private readonly baseUri: string =
+    "https://www.googleapis.com/fitness/v1/users/me/sessions";
 
   constructor(tokenDetails: TokenDetails, activityCode: ActivityType) {
     super();
