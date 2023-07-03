@@ -46,15 +46,15 @@ export default class AuthHelper {
     return this.instance;
   };
 
-  static needsToReInitializeToken = async (authHelper: AuthHelper) => {
+  checkAndRefreshToken = async () => {
     try {
-      switch (authHelper.checkTokenStatus()) {
+      switch (this.checkTokenStatus()) {
         case tokenStatus.expired:
-          await authHelper.refreshAuthToken();
+          await this.refreshAuthToken();
           console.log("Sync token refresh complete");
           return true;
         case tokenStatus.expiringSoon:
-          authHelper.refreshAuthToken().then(() => {
+          this.refreshAuthToken().then(() => {
             console.log("Async token refresh complete");
           });
           return false;

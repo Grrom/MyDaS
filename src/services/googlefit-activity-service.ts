@@ -3,18 +3,17 @@ import ActivityType from "../types/activity-types";
 import FileSystemHelper from "../helpers/file-system-helper";
 import DailyService from "../models/daily-service";
 import TokenDetails from "../types/token-details";
+import RequestHelper from "../helpers/request-helper";
 
 export default class GoogleFitActivityService extends DailyService {
   private activityCode: ActivityType;
-  private tokenDetails: TokenDetails;
 
   private readonly baseUri: string =
     "https://www.googleapis.com/fitness/v1/users/me/sessions";
 
-  constructor(tokenDetails: TokenDetails, activityCode: ActivityType) {
+  constructor(activityCode: ActivityType) {
     super();
     this.activityCode = activityCode;
-    this.tokenDetails = tokenDetails;
   }
 
   getActivityToday = async () => {
@@ -24,12 +23,7 @@ export default class GoogleFitActivityService extends DailyService {
     url.searchParams.append("endTime", this.endOfTodayInISO);
     url.searchParams.append("activityType", this.activityCode.toString());
 
-    fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.tokenDetails.authToken}`,
-      },
-    })
+    RequestHelper.get({ url: url })
       .then((res) => res.json())
       .then((json) => console.log(json));
   };
